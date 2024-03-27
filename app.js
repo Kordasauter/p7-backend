@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const path = require('path');
 const authRoutes = require('./routes/user')
 const booksRoutes = require('./routes/book')
-const MongoDBURI = require('./.env/variables')
+const MongoDBURI = require('./.env/MongoDBURI')
 
 const app = express();
 

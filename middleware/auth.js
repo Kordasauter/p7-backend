@@ -7,6 +7,8 @@ module.exports = (req, res, next) => {
         //décodage du token
         const decodedToken = jswt.verify(token, 'RANDOM_TOKEN_SECRET')
         const userId = decodedToken.userId
+        console.log("userId")
+        console.log(userId)
         req.auth = {
             userId: userId
         }

@@ -2,8 +2,8 @@
 const Book = require('../models/Book');
 //file system
 const fs = require('fs')
-//JsonWebToken, token d'authentification
-// const jswt = require('jsonwebtoken')
+//data pour préremplissage de la BDD
+// const data = require('../.env/data')
 
 exports.getAllBooks = (req,res,next) => {
      Book.find().then((books) => {
@@ -17,19 +17,15 @@ exports.getOneBook = (req,res,next) => {
 
 }
 exports.getBestRatedBooks = (req,res,next) => {
-    Book.find().then((books) => {
-        // res.status(200).json(books)
-        let bestBooks = new Array(Book);
-        books.map(book =>
-            {
-                console.log(book.averageRating)
-                console.log(book.averageRating)
-            })
+    //sort = tri dans l'ordre décroissant
+    //https://www.w3schools.com/nodejs/nodejs_mongodb_sort.asp
+    //limit = limite le nombre d'élement retourné
+    //https://www.w3schools.com/nodejs/nodejs_mongodb_limit.asp
+    Book.find().sort({averageRating: -1}).limit(3)
+    .then((books) => {
+        res.status(200).json(books)
      })
      .catch(error => res.status(500).json({error}))
-    // console.log("ici")
-    let bestBooks = ['livre 1','livre 2','livre 3']
-    res.status(200).json(bestBooks)
 }
 exports.addBook = (req,res,next) => {
     const bookObject = JSON.parse(req.body.book)
@@ -93,21 +89,43 @@ exports.deleteBook = (req,res,next) => {
 }
 exports.rateBook = (req,res,next) => {
     const newRate = {userId:req.auth.userId,grade:req.body.rating}
-    Book.findOne({_id: req.params.id})
-    .then((book) => {
-        book.ratings.push(newRate)
-        let sumRates = 0;
-        for(let i = 0;i < book.ratings.length;i++)
-        {
-            sumRates += book.ratings[i].grade
-        }
-        book.averageRating = Math.floor(sumRates / book.ratings.length)
-        Book.updateOne({_id: req.params.id},{
-            ratings: book.ratings,
-            averageRating: book.averageRating
+    //Si la note n'est pas comprise entre 0 et 5 elle n'est pas valide
+    if((newRate >= 0) && (newRate <= 5))
+    {
+        Book.findOne({_id: req.params.id})
+        .then((book) => {
+            book.ratings.push(newRate)
+            let sumRates = 0;
+            for(let i = 0;i < book.ratings.length;i++)
+            {
+                sumRates += book.ratings[i].grade
+            }
+            book.averageRating = sumRates / book.ratings.length
+            Book.updateOne({_id: req.params.id},{
+                ratings: book.ratings,
+                averageRating: book.averageRating.toFixed(1)
+            })
+            .then(() => res.status(200).json(book))
+            .catch(error => res.status(401).json({error}))
         })
-        .then(() => res.status(200).json(book))
-        .catch(error => res.status(401).json({error}))
-    })
-    .catch(error => res.status(400).json({error}))
+        .catch(error => res.status(400).json({error}))
+    }
+    else
+        res.status(400).json({message:'note non valide'})
+
 }
+
+// exports.initDB = (req,res,next) => 
+// {
+//     // console.log(data)
+//     data.map(book => 
+//         {
+            
+//             const newBook = new Book({
+//                 ...book
+//             })
+//             console.log(newBook)
+//             newBook.save()
+//         })
+//     res.status(200).json(data)
+// }
