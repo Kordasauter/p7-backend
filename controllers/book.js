@@ -52,11 +52,7 @@ exports.modifyBook = (req,res,next) => {
     }:{...req.body}
     //suppression du userId venant du client
     //pour eviter toute réappropriation du livre
-    console.log("avant : ")
-    console.log(bookObject)
     delete bookObject._userId
-    console.log("après : ")
-    console.log(bookObject)
     Book.findOne({_id: req.params.id})
     .then((book) =>{
         //si le livre à été posté par un autre utilisateur, il n'as pas le droit de le modifier
@@ -117,14 +113,9 @@ exports.rateBook = (req,res,next) => {
 
 // exports.initDB = (req,res,next) => 
 // {
-//     // console.log(data)
 //     data.map(book => 
 //         {
-            
-//             const newBook = new Book({
-//                 ...book
-//             })
-//             console.log(newBook)
+//             const newBook = new Book({ ...book})
 //             newBook.save()
 //         })
 //     res.status(200).json(data)

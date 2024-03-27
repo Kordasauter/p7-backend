@@ -4,7 +4,6 @@ const jswt = require('jsonwebtoken')
 
 exports.addUser = (req,res,next) => {
     //hash du mot de passe
-    // console.log(req.body)
     bcrypt.hash(req.body.password,10)
     .then(hash => {
         const user = new User({
@@ -14,7 +13,6 @@ exports.addUser = (req,res,next) => {
         user.save()
         .then (()=> {
             res.status(201).json({message : 'Utilisateur '+ user.email +' crée'})
-            console.log('mail : ' + user.email + ' / password : '+ user.password)
         })
         .catch(error => res.status(400).json({error}))
     })
@@ -32,7 +30,6 @@ exports.logUser = (req,res,next) => {
                 if(!valid)
                     res.status(401).json({message:'E-mail et/ou mot de passe incorrecte'})
                 else{
-                    console.log(user)
                     res.status(200).json({
                         userId : user._id,
                         // token: 'TOKEN'
