@@ -3,20 +3,56 @@ const bcrypt = require('bcrypt')
 const jswt = require('jsonwebtoken')
 
 exports.addUser = (req,res,next) => {
+    
+    let forbiddenChars = new RegExp(/[\'&é~"#{\(\[|è`\\ç^à\)\]=}\*¨$£¤ù%µ§:\/;,\?<>]/)
+
+    //si un caractère spécial est trouvé dans le mail
+    if(forbiddenChars.test(req.body.email))
+        res.status(400).json({message:'format d\'e-mail non valide'})
+    else
+    {
+        if(req.body.email.split('@').length == 2 )
+        {
+            if(req.body.email.split('@')[1].split('.').length == 2)
+            {
+                //hash du mot de passe
+                bcrypt.hash(req.body.password,10)
+                .then(hash => {
+                    const user = new User({
+                        email: req.body.email,
+                        password: hash
+                    })
+                    user.save()
+                    .then (()=> {
+                        res.status(201).json({message : 'Utilisateur '+ user.email +' crée'})
+                    })
+                    .catch(error => res.status(400).json({error}))
+                })
+                .catch(error => res.status(500).json({error}))
+            }
+            else
+                res.status(400).json({message:'format d\'e-mail non valide'})
+        }
+        else
+            res.status(400).json({message:'format d\'e-mail non valide'})
+        //         console.log(req.body.email.split('@')[1].split('.').length)
+        // res.status(201).json({message : 'ok'})
+    }
+
     //hash du mot de passe
-    bcrypt.hash(req.body.password,10)
-    .then(hash => {
-        const user = new User({
-            email: req.body.email,
-            password: hash
-        })
-        user.save()
-        .then (()=> {
-            res.status(201).json({message : 'Utilisateur '+ user.email +' crée'})
-        })
-        .catch(error => res.status(400).json({error}))
-    })
-    .catch(error => res.status(500).json({error}))
+    // bcrypt.hash(req.body.password,10)
+    // .then(hash => {
+    //     const user = new User({
+    //         email: req.body.email,
+    //         password: hash
+    //     })
+    //     user.save()
+    //     .then (()=> {
+    //         res.status(201).json({message : 'Utilisateur '+ user.email +' crée'})
+    //     })
+    //     .catch(error => res.status(400).json({error}))
+    // })
+    // .catch(error => res.status(500).json({error}))
 }
 
 exports.logUser = (req,res,next) => {

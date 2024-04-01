@@ -86,7 +86,7 @@ exports.deleteBook = (req,res,next) => {
 exports.rateBook = (req,res,next) => {
     const newRate = {userId:req.auth.userId,grade:req.body.rating}
     //Si la note n'est pas comprise entre 0 et 5 elle n'est pas valide
-    if((newRate >= 0) && (newRate <= 5))
+    if((newRate.grade >= 0) && (newRate.grade <= 5))
     {
         Book.findOne({_id: req.params.id})
         .then((book) => {
@@ -97,9 +97,10 @@ exports.rateBook = (req,res,next) => {
                 sumRates += book.ratings[i].grade
             }
             book.averageRating = sumRates / book.ratings.length
+            book.averageRating = book.averageRating.toFixed(1)
             Book.updateOne({_id: req.params.id},{
                 ratings: book.ratings,
-                averageRating: book.averageRating.toFixed(1)
+                averageRating: book.averageRating
             })
             .then(() => res.status(200).json(book))
             .catch(error => res.status(401).json({error}))
@@ -108,7 +109,6 @@ exports.rateBook = (req,res,next) => {
     }
     else
         res.status(400).json({message:'note non valide'})
-
 }
 
 // exports.initDB = (req,res,next) => 
