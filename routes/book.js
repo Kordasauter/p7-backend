@@ -9,7 +9,6 @@ const bookController = require('../controllers/book')
 //Authentification non requise
 router.get('/',bookController.getAllBooks)//fait
 router.get('/bestrating',bookController.getBestRatedBooks)//fait
-// router.get('/init',bookController.initDB)
 router.get('/:id', bookController.getOneBook)//fait
 
 

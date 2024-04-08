@@ -2,8 +2,6 @@
 const Book = require('../models/Book');
 //file system
 const fs = require('fs')
-//data pour préremplissage de la BDD
-// const data = require('../.env/data')
 
 exports.getAllBooks = (req,res,next) => {
      Book.find().then((books) => {
@@ -90,33 +88,38 @@ exports.rateBook = (req,res,next) => {
     {
         Book.findOne({_id: req.params.id})
         .then((book) => {
-            book.ratings.push(newRate)
-            let sumRates = 0;
+            let sumRates = 0
+            let validRating = true;
+            //vérifie si l'utilisateur n'as jamais saisie de note pour ce livre
             for(let i = 0;i < book.ratings.length;i++)
             {
                 sumRates += book.ratings[i].grade
+                //si l'userId de l'utilisateur est déjà présent dans les livre on invalide la note
+                if(book.ratings[i].userId == req.auth.userId)
+                    validRating = false
             }
-            book.averageRating = sumRates / book.ratings.length
-            book.averageRating = book.averageRating.toFixed(1)
-            Book.updateOne({_id: req.params.id},{
-                ratings: book.ratings,
-                averageRating: book.averageRating
-            })
-            .then(() => res.status(200).json(book))
-            .catch(error => res.status(401).json({error}))
+            if(validRating)
+            {
+                //ajout de la note au livre
+                book.ratings.push(newRate)
+                //ajout de la note à la somme des notes
+                sumRates += newRate.grade
+                //calcul de la moyenne
+                book.averageRating = sumRates / book.ratings.length
+                book.averageRating = book.averageRating.toFixed(1)
+                //sauvegarde de la nouvelle note et de la note moyenne du livre 
+                Book.updateOne({_id: req.params.id},{
+                    ratings: book.ratings,
+                    averageRating: book.averageRating
+                })
+                .then(() => res.status(200).json(book))
+                .catch(error => res.status(401).json({error}))
+            }
+            else
+                res.status(400).json({message:'livre déjà noté'})
         })
         .catch(error => res.status(400).json({error}))
     }
     else
         res.status(400).json({message:'note non valide'})
 }
-
-// exports.initDB = (req,res,next) => 
-// {
-//     data.map(book => 
-//         {
-//             const newBook = new Book({ ...book})
-//             newBook.save()
-//         })
-//     res.status(200).json(data)
-// }

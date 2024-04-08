@@ -33,24 +33,7 @@ exports.addUser = (req,res,next) => {
         }
         else
             res.status(400).json({message:'format d\'e-mail non valide'})
-        //         console.log(req.body.email.split('@')[1].split('.').length)
-        // res.status(201).json({message : 'ok'})
     }
-
-    //hash du mot de passe
-    // bcrypt.hash(req.body.password,10)
-    // .then(hash => {
-    //     const user = new User({
-    //         email: req.body.email,
-    //         password: hash
-    //     })
-    //     user.save()
-    //     .then (()=> {
-    //         res.status(201).json({message : 'Utilisateur '+ user.email +' crée'})
-    //     })
-    //     .catch(error => res.status(400).json({error}))
-    // })
-    // .catch(error => res.status(500).json({error}))
 }
 
 exports.logUser = (req,res,next) => {
