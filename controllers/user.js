@@ -3,9 +3,7 @@ const bcrypt = require('bcrypt')
 const jswt = require('jsonwebtoken')
 
 exports.addUser = (req,res,next) => {
-    
     let forbiddenChars = new RegExp(/[\'&é~"#{\(\[|è`\\ç^à\)\]=}\*¨$£¤ù%µ§:\/;,\?<>]/)
-
     //si un caractère spécial est trouvé dans le mail
     if(forbiddenChars.test(req.body.email))
         res.status(400).json({message:'format d\'e-mail non valide'})
