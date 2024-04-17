@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/cc9a4467-6ecb-4380-bd7f-e703b932bd6f/resourceGroups/KordTest_group/providers/Microsoft.Web/sites/TestKord",
+    "appService.deploySubpath": "."
+}
