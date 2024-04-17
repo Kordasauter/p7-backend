@@ -29,4 +29,8 @@ app.use('/api/books',booksRoutes)
 //Gestion des images
 app.use('/images', express.static(path.join(__dirname,'images')))
 
+app.use('/',(req,res,next) => {
+  res.status(201).json({message : 'ça marche !'})
+})
+
 module.exports = app;
