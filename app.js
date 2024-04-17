@@ -3,12 +3,12 @@ const mongoose = require('mongoose');
 const path = require('path');
 const authRoutes = require('./routes/user')
 const booksRoutes = require('./routes/book')
-const MongoDBURI = require('./.env/MongoDBURI')
+// const MongoDBURI = require('./.env/MongoDBURI')
 
 const app = express();
 
 //connexion à mongoDB
-mongoose.connect(MongoDBURI,
+mongoose.connect('mongodb+srv://kord:1ddfc3@cluster0.hdphgyv.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
   { useNewUrlParser: true,
     useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
